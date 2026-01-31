@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - REALITY</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary-purple: #6B46C1;
+            --electric-blue: #3B82F6;
+            --dark-slate: #0F172A;
+            --slate-800: #1E293B;
+            --slate-300: #CBD5E1;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-slate) 0%, #1E293B 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary-purple), var(--electric-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-cover {
+            background: linear-gradient(135deg, var(--primary-purple), var(--electric-blue));
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('resources/hero-bg.jpg') center/cover;
+            opacity: 0.3;
+        }
+        
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border: 6px solid var(--dark-slate);
+            margin-top: -75px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .masonry-grid {
+            column-count: 3;
+            column-gap: 1.5rem;
+            column-fill: balance;
+        }
+        
+        @media (max-width: 1024px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .masonry-grid {
+                column-count: 1;
+            }
+            
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+                margin-top: -60px;
+            }
+        }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="glass-effect fixed top-0 left-0 right-0 z-50 border-b border-white/10">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Back Button -->
+                <a href="index.html" class="flex items-center space-x-2 text-white hover:text-purple-400 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    <span>Volver</span>
+                </a>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-white hover:text-purple-400 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Profile Header -->
+    <section class="pt-20">
+        <div class="profile-cover"></div>
+        <div class="container mx-auto px-4 -mt-16 relative z-10">
+            <div class="glass-effect rounded-2xl p-6 mb-6">
+                <div class="flex flex-col lg:flex-row items-center lg:items-start space-y-4 lg:space-y-0 lg:space-x-6">
+                    <!-- Avatar -->
+                    <div class="profile-avatar rounded-full overflow-hidden">
+                        <img src="resources/avatar-collection.jpg" alt="Profile Avatar" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- Profile Info -->
+                    <div class="flex-1 text-center lg:text-left">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+                            <div>
+                                <h1 class="text-3xl font-bold text-white mb-1">GamerPro2024</h1>
+                                <p class="text-slate-400">@cyber_ninja_gaming</p>
+                            </div>
+                            <div class="flex items-center space-x-3 mt-4 lg:mt-0">
+                                <button id="follow-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                                    Seguir
+                                </button>
+                                <button class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                                    Mensaje
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Bio -->
+                        <p class="text-slate-300 mb-4 max-w-2xl">
+                            🎮 Gamer profesional | 🎨 Creador de contenido | 🚀 Streamer de variedades 
+                            | 💜 Amante de los juegos retro y el anime | ✨ Viviendo la vida pixel por pixel
+                        </p>
+                        
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+                            <div class="stat-card text-center bg-slate-800/50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-white">2.4K</div>
+                                <div class="text-slate-400 text-sm">Seguidores</div>
+                            </div>
+                            <div class="stat-card text-center bg-slate-800/50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-white">1.8K</div>
+                                <div class="text-slate-400 text-sm">Siguiendo</div>
+                            </div>
+                            <div class="stat-card text-center bg-slate-800/50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-white">156</div>
+                                <div class="text-slate-400 text-sm">Publicaciones</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Profile Content -->
+    <section class="container mx-auto px-4 pb-24 lg:pb-8">
+        <!-- Tabs -->
+        <div class="glass-effect rounded-2xl mb-6">
+            <div class="flex items-center justify-center lg:justify-start space-x-8 p-6">
+                <button class="tab-btn active flex flex-col items-center space-y-2 text-purple-400" data-tab="posts">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Publicaciones</span>
+                </button>
+                
+                <button class="tab-btn flex flex-col items-center space-y-2 text-slate-400 hover:text-purple-400 transition-colors" data-tab="saved">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Guardados</span>
+                </button>
+                
+                <button class="tab-btn flex flex-col items-center space-y-2 text-slate-400 hover:text-purple-400 transition-colors" data-tab="liked">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Gustados</span>
+                </button>
+                
+                <button class="tab-btn flex flex-col items-center space-y-2 text-slate-400 hover:text-purple-400 transition-colors" data-tab="stats">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Estadísticas</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab Content -->
+        <div id="tab-content">
+            <!-- Posts Tab -->
+            <div id="posts-tab" class="tab-content active">
+                <div class="masonry-grid" id="posts-grid">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Saved Tab -->
+            <div id="saved-tab" class="tab-content">
+                <div class="masonry-grid" id="saved-grid">
+                    <!-- Saved content will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Liked Tab -->
+            <div id="liked-tab" class="tab-content">
+                <div class="masonry-grid" id="liked-grid">
+                    <!-- Liked content will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Stats Tab -->
+            <div id="stats-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Engagement Chart -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Engagement</h3>
+                        <div id="engagement-chart" style="height: 300px;"></div>
+                    </div>
+                    
+                    <!-- Top Content -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Mejor Contenido</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4 p-3 bg-slate-800/50 rounded-lg">
+                                <div class="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden">
+                                    <img src="resources/thumbnails-collection.jpg" alt="Content" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium">Epic Gaming Moments</h4>
+                                    <p class="text-slate-400 text-sm">2.4K views • 156 likes</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 p-3 bg-slate-800/50 rounded-lg">
+                                <div class="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden">
+                                    <img src="resources/thumbnails-collection.jpg" alt="Content" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium">VR Gaming Experience</h4>
+                                    <p class="text-slate-400 text-sm">1.8K views • 98 likes</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 p-3 bg-slate-800/50 rounded-lg">
+                                <div class="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden">
+                                    <img src="resources/thumbnails-collection.jpg" alt="Content" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium">Digital Art Process</h4>
+                                    <p class="text-slate-400 text-sm">1.2K views • 67 likes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly Stats -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Estadísticas Mensuales</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">Nuevos seguidores</span>
+                                <span class="text-white font-semibold">+342</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">Publicaciones</span>
+                                <span class="text-white font-semibold">23</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">Engagement rate</span>
+                                <span class="text-white font-semibold">8.7%</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">Promedio de vistas</span>
+                                <span class="text-white font-semibold">1.2K</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Achievements -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Logros</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">🏆</div>
+                                <div class="text-white font-semibold">Streamer Pro</div>
+                                <div class="text-slate-400 text-sm">100+ streams</div>
+                            </div>
+                            
+                            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">💜</div>
+                                <div class="text-white font-semibold">Community Hero</div>
+                                <div class="text-slate-400 text-sm">1K+ followers</div>
+                            </div>
+                            
+                            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">⭐</div>
+                                <div class="text-white font-semibold">Content Creator</div>
+                                <div class="text-slate-400 text-sm">50+ posts</div>
+                            </div>
+                            
+                            <div class="text-center p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">🔥</div>
+                                <div class="text-white font-semibold">Trending</div>
+                                <div class="text-slate-400 text-sm">Viral content</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 z-50">
+        <div class="flex items-center justify-around py-2">
+            <a href="index.html" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span class="text-xs mt-1">Inicio</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-xs mt-1">Buscar</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span class="text-xs mt-1">Crear</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center p-2 text-purple-400">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7.5V9M15 11.5C15.8 11.5 16.5 12.2 16.5 13S15.8 14.5 15 14.5 13.5 13.8 13.5 13 14.2 11.5 15 11.5M5 12C5.8 12 6.5 12.7 6.5 13.5S5.8 15 5 15 3.5 14.3 3.5 13.5 4.2 12 5 12M12 7.5C14.2 7.5 16.2 8.7 17.5 10.5C17.5 10.5 17.5 10.5 17.5 10.5C17.5 10.5 17.5 10.5 17.5 10.5C16.2 12.3 14.2 13.5 12 13.5S7.8 12.3 6.5 10.5C6.5 10.5 6.5 10.5 6.5 10.5C6.5 10.5 6.5 10.5 6.5 10.5C7.8 8.7 9.8 7.5 12 7.5ZM12 20C7.6 20 4 16.4 4 12S7.6 4 12 4 20 7.6 20 12 16.4 20 12 20Z"></path>
+                </svg>
+                <span class="text-xs mt-1">Perfil</span>
+            </a>
+        </div>
+    </nav>
+    
+    <script>
+        // Profile Page JavaScript
+        class ProfilePage {
+            constructor() {
+                this.currentTab = 'posts';
+                this.mockData = [];
+                this.init();
+            }
+            
+            init() {
+                this.generateMockData();
+                this.setupEventListeners();
+                this.loadTabContent();
+                this.initializeChart();
+            }
+            
+            generateMockData() {
+                // Similar to main.js but with profile-specific data
+                const creators = [
+                    { name: 'GamerPro2024', avatar: 'resources/avatar-collection.jpg', verified: true }
+                ];
+                
+                const categories = ['gaming', 'art', 'music', 'tech', 'lifestyle'];
+                const types = ['live', 'video', 'image'];
+                const badges = ['live', 'rare', 'new', 'trending', 'epic'];
+                
+                const titles = [
+                    'My Epic Gaming Setup Tour',
+                    'Digital Art Creation Process',
+                    'Live Coding Session',
+                    'VR Gaming Experience',
+                    'Anime Drawing Tutorial',
+                    'Gaming Highlights',
+                    'Retro Game Review',
+                    '3D Modeling Timelapse',
+                    'Music Production',
+                    'Cyberpunk Art Showcase'
+                ];
+                
+                const descriptions = [
+                    'Check out my ultimate gaming setup!',
+                    'Watch me create digital art from scratch.',
+                    'Join me for a live coding session.',
+                    'Amazing VR gaming experience!',
+                    'Learn to draw anime characters.',
+                    'Best gaming moments compilation.',
+                    'Reviewing classic retro games.',
+                    '3D modeling process timelapse.',
+                    'Creating music live!',
+                    'Showcasing cyberpunk artwork.'
+                ];
+                
+                for (let i = 0; i < 15; i++) {
+                    const creator = creators[0];
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    const category = categories[Math.floor(Math.random() * categories.length)];
+                    const badgeCount = Math.floor(Math.random() * 2) + 1;
+                    const itemBadges = [];
+                    
+                    for (let j = 0; j < badgeCount; j++) {
+                        const badge = badges[Math.floor(Math.random() * badges.length)];
+                        if (!itemBadges.includes(badge)) {
+                            itemBadges.push(badge);
+                        }
+                    }
+                    
+                    this.mockData.push({
+                        id: `profile-content-${i}`,
+                        type: type,
+                        title: titles[Math.floor(Math.random() * titles.length)],
+                        description: descriptions[Math.floor(Math.random() * descriptions.length)],
+                        thumbnail: 'resources/thumbnails-collection.jpg',
+                        author: creator,
+                        stats: {
+                            views: Math.floor(Math.random() * 50000) + 1000,
+                            likes: Math.floor(Math.random() * 20000) + 500,
+                            comments: Math.floor(Math.random() * 2000) + 100
+                        },
+                        badges: itemBadges,
+                        timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                        category: category
+                    });
+                }
+                
+                this.mockData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            }
+            
+            setupEventListeners() {
+                // Tab switching
+                const tabButtons = document.querySelectorAll('.tab-btn');
+                tabButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tabName = e.currentTarget.dataset.tab;
+                        this.switchTab(tabName);
+                    });
+                });
+                
+                // Follow button
+                const followBtn = document.getElementById('follow-btn');
+                if (followBtn) {
+                    followBtn.addEventListener('click', () => {
+                        this.toggleFollow();
+                    });
+                }
+            }
+            
+            switchTab(tabName) {
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active', 'text-purple-400');
+                    btn.classList.add('text-slate-400');
+                });
+                
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active', 'text-purple-400');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-slate-400');
+                
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                this.currentTab = tabName;
+                this.loadTabContent();
+            }
+            
+            loadTabContent() {
+                const grid = document.getElementById(`${this.currentTab}-grid`);
+                if (!grid) return;
+                
+                grid.innerHTML = '';
+                
+                let contentToShow = [];
+                
+                switch (this.currentTab) {
+                    case 'posts':
+                        contentToShow = this.mockData;
+                        break;
+                    case 'saved':
+                        contentToShow = this.mockData.slice(0, 8);
+                        break;
+                    case 'liked':
+                        contentToShow = this.mockData.slice(0, 12);
+                        break;
+                    default:
+                        return;
+                }
+                
+                contentToShow.forEach((item, index) => {
+                    const card = this.createContentCard(item);
+                    grid.appendChild(card);
+                    
+                    // Animate card entrance
+                    anime({
+                        targets: card,
+                        translateY: [50, 0],
+                        opacity: [0, 1],
+                        delay: index * 50,
+                        duration: 600,
+                        easing: 'easeOutExpo'
+                    });
+                });
+            }
+            
+            createContentCard(item) {
+                const card = document.createElement('div');
+                card.className = 'masonry-item';
+                
+                const formattedViews = this.formatNumber(item.stats.views);
+                const formattedLikes = this.formatNumber(item.stats.likes);
+                const timeAgo = this.getTimeAgo(item.timestamp);
+                
+                const badgeColors = {
+                    'live': 'bg-red-500',
+                    'rare': 'bg-blue-500',
+                    'new': 'bg-green-500',
+                    'trending': 'bg-orange-500',
+                    'epic': 'bg-purple-500'
+                };
+                
+                card.innerHTML = `
+                    <div class="bg-slate-800 rounded-xl overflow-hidden">
+                        <div class="relative">
+                            <img src="${item.thumbnail}" alt="${item.title}" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            
+                            <div class="absolute top-3 left-3 flex flex-wrap gap-2">
+                                ${item.badges.map(badge => `
+                                    <span class="${badgeColors[badge]} text-white text-xs px-2 py-1 rounded-full">
+                                        ${badge}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2">${item.title}</h3>
+                            <p class="text-slate-400 text-sm mb-3">${item.description}</p>
+                            
+                            <div class="flex items-center justify-between text-slate-400 text-sm">
+                                <span>${formattedViews} visualizaciones</span>
+                                <span>${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                return card;
+            }
+            
+            toggleFollow() {
+                const btn = document.getElementById('follow-btn');
+                const isFollowing = btn.textContent === 'Siguiendo';
+                
+                if (isFollowing) {
+                    btn.textContent = 'Seguir';
+                    btn.classList.remove('bg-slate-600', 'hover:bg-slate-700');
+                    btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                } else {
+                    btn.textContent = 'Siguiendo';
+                    btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                    btn.classList.add('bg-slate-600', 'hover:bg-slate-700');
+                }
+                
+                // Animate button
+                anime({
+                    targets: btn,
+                    scale: [1, 1.1, 1],
+                    duration: 300,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+            }
+            
+            initializeChart() {
+                const chartDom = document.getElementById('engagement-chart');
+                if (!chartDom) return;
+                
+                const myChart = echarts.init(chartDom);
+                
+                const option = {
+                    backgroundColor: 'transparent',
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: '#1E293B',
+                        borderColor: '#6B46C1',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        data: ['Vistas', 'Likes', 'Comentarios'],
+                        textStyle: {
+                            color: '#CBD5E1'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+                        axisLine: {
+                            lineStyle: {
+                                color: '#475569'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#94A3B8'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: {
+                            lineStyle: {
+                                color: '#475569'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#94A3B8'
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: '#334155'
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Vistas',
+                            type: 'line',
+                            stack: 'Total',
+                            data: [1200, 1800, 2100, 2400, 2200, 2800, 3200],
+                            lineStyle: {
+                                color: '#6B46C1'
+                            },
+                            itemStyle: {
+                                color: '#6B46C1'
+                            },
+                            areaStyle: {
+                                color: {
+                                    type: 'linear',
+                                    x: 0,
+                                    y: 0,
+                                    x2: 0,
+                                    y2: 1,
+                                    colorStops: [{
+                                        offset: 0, color: 'rgba(107, 70, 193, 0.3)'
+                                    }, {
+                                        offset: 1, color: 'rgba(107, 70, 193, 0.1)'
+                                    }]
+                                }
+                            }
+                        },
+                        {
+                            name: 'Likes',
+                            type: 'line',
+                            stack: 'Total',
+                            data: [300, 450, 600, 800, 700, 900, 1100],
+                            lineStyle: {
+                                color: '#3B82F6'
+                            },
+                            itemStyle: {
+                                color: '#3B82F6'
+                            }
+                        },
+                        {
+                            name: 'Comentarios',
+                            type: 'line',
+                            stack: 'Total',
+                            data: [50, 80, 120, 150, 130, 180, 220],
+                            lineStyle: {
+                                color: '#10B981'
+                            },
+                            itemStyle: {
+                                color: '#10B981'
+                            }
+                        }
+                    ]
+                };
+                
+                myChart.setOption(option);
+                
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    myChart.resize();
+                });
+            }
+            
+            formatNumber(num) {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num.toString();
+            }
+            
+            getTimeAgo(timestamp) {
+                const now = new Date();
+                const time = new Date(timestamp);
+                const diffInSeconds = Math.floor((now - time) / 1000);
+                
+                if (diffInSeconds < 60) {
+                    return 'hace un momento';
+                } else if (diffInSeconds < 3600) {
+                    const minutes = Math.floor(diffInSeconds / 60);
+                    return `hace ${minutes} min`;
+                } else if (diffInSeconds < 86400) {
+                    const hours = Math.floor(diffInSeconds / 3600);
+                    return `hace ${hours} h`;
+                } else {
+                    const days = Math.floor(diffInSeconds / 86400);
+                    return `hace ${days} d`;
+                }
+            }
+        }
+        
+        // Initialize profile page
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProfilePage();
+        });
+    </script>
+</body>
+</html>

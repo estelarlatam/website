@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - REALITY</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary-purple: #6B46C1;
+            --electric-blue: #3B82F6;
+            --dark-slate: #0F172A;
+            --slate-800: #1E293B;
+            --slate-300: #CBD5E1;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-slate) 0%, #1E293B 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary-purple), var(--electric-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-section {
+            display: none;
+        }
+        
+        .settings-section.active {
+            display: block;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-purple);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .form-input {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+            outline: none;
+        }
+        
+        .form-input::placeholder {
+            color: #94A3B8;
+        }
+        
+        .settings-nav-item {
+            transition: all 0.3s ease;
+        }
+        
+        .settings-nav-item:hover {
+            background: rgba(107, 70, 193, 0.1);
+            border-left: 4px solid var(--primary-purple);
+        }
+        
+        .settings-nav-item.active {
+            background: rgba(107, 70, 193, 0.2);
+            border-left: 4px solid var(--primary-purple);
+            color: var(--primary-purple);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="glass-effect fixed top-0 left-0 right-0 z-50 border-b border-white/10">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Back Button -->
+                <a href="index.html" class="flex items-center space-x-2 text-white hover:text-purple-400 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    <span>Volver</span>
+                </a>
+                
+                <!-- Title -->
+                <h1 class="text-2xl font-bold gradient-text">Configuración</h1>
+                
+                <!-- Save Button -->
+                <button id="save-settings" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="pt-20 min-h-screen">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Settings Navigation -->
+                <div class="lg:col-span-1">
+                    <div class="glass-effect rounded-2xl p-4 sticky top-24">
+                        <nav class="space-y-2">
+                            <button class="settings-nav-item active w-full text-left px-4 py-3 rounded-lg text-white" data-section="account">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    <span>Cuenta</span>
+                                </div>
+                            </button>
+                            
+                            <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:text-white" data-section="privacy">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    <span>Privacidad</span>
+                                </div>
+                            </button>
+                            
+                            <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:text-white" data-section="notifications">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6l5-5v5zM7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
+                                    </svg>
+                                    <span>Notificaciones</span>
+                                </div>
+                            </button>
+                            
+                            <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:text-white" data-section="appearance">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2a2 2 0 002-2V5a2 2 0 00-2-2H7z"></path>
+                                    </svg>
+                                    <span>Apariencia</span>
+                                </div>
+                            </button>
+                            
+                            <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg text-slate-300 hover:text-white" data-section="help">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>Ayuda</span>
+                                </div>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Settings Content -->
+                <div class="lg:col-span-3">
+                    <!-- Account Settings -->
+                    <div id="account-section" class="settings-section active">
+                        <div class="glass-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Configuración de Cuenta</h2>
+                            
+                            <!-- Profile Information -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-white mb-4">Información del Perfil</h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Nombre de usuario</label>
+                                        <input type="text" value="GamerPro2024" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Handle</label>
+                                        <input type="text" value="@cyber_ninja_gaming" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Biografía</label>
+                                        <textarea rows="4" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Cuéntanos sobre ti...">🎮 Gamer profesional | 🎨 Creador de contenido | 🚀 Streamer de variedades | 💜 Amante de los juegos retro y el anime | ✨ Viviendo la vida pixel por pixel</textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Correo electrónico</label>
+                                        <input type="email" value="gamer@example.com" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Teléfono</label>
+                                        <input type="tel" value="+1 (555) 123-4567" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Change Password -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-white mb-4">Cambiar Contraseña</h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Contraseña actual</label>
+                                        <input type="password" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Nueva contraseña</label>
+                                        <input type="password" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="block text-slate-300 text-sm font-medium mb-2">Confirmar nueva contraseña</label>
+                                        <input type="password" class="form-input w-full px-4 py-3 rounded-lg">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Avatar -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-4">Foto de Perfil</h3>
+                                
+                                <div class="flex items-center space-x-6">
+                                    <div class="w-24 h-24 rounded-full overflow-hidden">
+                                        <img src="resources/avatar-collection.jpg" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    
+                                    <div>
+                                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors mr-3">
+                                            Cambiar foto
+                                        </button>
+                                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                                            Eliminar
+                                        </button>
+                                        
+                                        <p class="text-slate-400 text-sm mt-2">
+                                            JPG, PNG o GIF. Tamaño máximo 5MB.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Privacy Settings -->
+                    <div id="privacy-section" class="settings-section">
+                        <div class="glass-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Privacidad y Seguridad</h2>
+                            
+                            <!-- Privacy Controls -->
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Perfil privado</h3>
+                                        <p class="text-slate-400 text-sm">Solo tus seguidores podrán ver tu contenido</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Comentarios restringidos</h3>
+                                        <p class="text-slate-400 text-sm">Solo personas que sigues pueden comentar</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Mostrar estado en línea</h3>
+                                        <p class="text-slate-400 text-sm">Otros usuarios pueden ver cuando estás en línea</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Permitir mensajes directos</h3>
+                                        <p class="text-slate-400 text-sm">Recibir mensajes de otros usuarios</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4">
+                                    <div>
+                                        <h3 class="text-white font-medium">Compartir actividad</h3>
+                                        <p class="text-slate-400 text-sm">Mostrar lo que estás viendo o jugando</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Blocked Users -->
+                        <div class="glass-effect rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Usuarios Bloqueados</h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-slate-700 rounded-full"></div>
+                                        <div>
+                                            <p class="text-white font-medium">UsuarioNoDeseado</p>
+                                            <p class="text-slate-400 text-sm">@spam_user_123</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-red-400 hover:text-red-300 text-sm font-medium">Desbloquear</button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-slate-700 rounded-full"></div>
+                                        <div>
+                                            <p class="text-white font-medium">TrollMaster</p>
+                                            <p class="text-slate-400 text-sm">@troll_account</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-red-400 hover:text-red-300 text-sm font-medium">Desbloquear</button>
+                                </div>
+                            </div>
+                            
+                            <button class="mt-4 text-purple-400 hover:text-purple-300 font-medium">
+                                + Agregar usuario a la lista
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications Settings -->
+                    <div id="notifications-section" class="settings-section">
+                        <div class="glass-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Notificaciones</h2>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Notificaciones push</h3>
+                                        <p class="text-slate-400 text-sm">Recibir notificaciones en tu dispositivo</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Nuevos seguidores</h3>
+                                        <p class="text-slate-400 text-sm">Notificarte cuando alguien te sigue</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Comentarios</h3>
+                                        <p class="text-slate-400 text-sm">Notificarte de nuevos comentarios</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Menciones</h3>
+                                        <p class="text-slate-400 text-sm">Cuando alguien te menciona</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4 border-b border-slate-700">
+                                    <div>
+                                        <h3 class="text-white font-medium">Mensajes directos</h3>
+                                        <p class="text-slate-400 text-sm">Nuevos mensajes directos</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-4">
+                                    <div>
+                                        <h3 class="text-white font-medium">Correos electrónicos</h3>
+                                        <p class="text-slate-400 text-sm">Resúmenes y actualizaciones por email</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Appearance Settings -->
+                    <div id="appearance-section" class="settings-section">
+                        <div class="glass-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Apariencia</h2>
+                            
+                            <!-- Theme -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-white mb-4">Tema</h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="theme-option border-2 border-purple-600 rounded-lg p-4 cursor-pointer">
+                                        <div class="w-full h-20 bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg mb-3"></div>
+                                        <p class="text-white font-medium text-center">Oscuro</p>
+                                        <p class="text-slate-400 text-sm text-center">Tema actual</p>
+                                    </div>
+                                    
+                                    <div class="theme-option border-2 border-transparent hover:border-slate-600 rounded-lg p-4 cursor-pointer">
+                                        <div class="w-full h-20 bg-gradient-to-br from-slate-100 to-slate-300 rounded-lg mb-3"></div>
+                                        <p class="text-slate-300 font-medium text-center">Claro</p>
+                                        <p class="text-slate-500 text-sm text-center">Próximamente</p>
+                                    </div>
+                                    
+                                    <div class="theme-option border-2 border-transparent hover:border-slate-600 rounded-lg p-4 cursor-pointer">
+                                        <div class="w-full h-20 bg-gradient-to-br from-purple-200 via-pink-200 to-blue-200 rounded-lg mb-3"></div>
+                                        <p class="text-slate-300 font-medium text-center">Auto</p>
+                                        <p class="text-slate-500 text-sm text-center">Próximamente</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Language -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-white mb-4">Idioma</h3>
+                                
+                                <select class="form-input w-full px-4 py-3 rounded-lg">
+                                    <option value="es" selected>Español</option>
+                                    <option value="en">English</option>
+                                    <option value="pt">Português</option>
+                                    <option value="fr">Français</option>
+                                    <option value="de">Deutsch</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Display Options -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-4">Opciones de Visualización</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-white font-medium">Animaciones</h4>
+                                            <p class="text-slate-400 text-sm">Efectos visuales y transiciones</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-white font-medium">Imágenes en alta calidad</h4>
+                                            <p class="text-slate-400 text-sm">Cargar imágenes en mejor resolución</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-white font-medium">Modo ahorro de datos</h4>
+                                            <p class="text-slate-400 text-sm">Reducir el uso de datos móviles</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Help Settings -->
+                    <div id="help-section" class="settings-section">
+                        <div class="glass-effect rounded-2xl p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Ayuda y Soporte</h2>
+                            
+                            <div class="space-y-6">
+                                <!-- FAQ -->
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-4">Preguntas Frecuentes</h3>
+                                    
+                                    <div class="space-y-4">
+                                        <details class="bg-slate-800/50 rounded-lg">
+                                            <summary class="p-4 cursor-pointer text-white font-medium hover:bg-slate-700/50 rounded-lg">
+                                                ¿Cómo cambio mi contraseña?
+                                            </summary>
+                                            <div class="p-4 pt-0 text-slate-300">
+                                                Ve a Configuración > Cuenta y encuentra la opción "Cambiar contraseña". Ingresa tu contraseña actual y luego la nueva contraseña dos veces.
+                                            </div>
+                                        </details>
+                                        
+                                        <details class="bg-slate-800/50 rounded-lg">
+                                            <summary class="p-4 cursor-pointer text-white font-medium hover:bg-slate-700/50 rounded-lg">
+                                                ¿Cómo hago mi perfil privado?
+                                            </summary>
+                                            <div class="p-4 pt-0 text-slate-300">
+                                                En Configuración > Privacidad, activa la opción "Perfil privado". Solo tus seguidores aprobados podrán ver tu contenido.
+                                            </div>
+                                        </details>
+                                        
+                                        <details class="bg-slate-800/50 rounded-lg">
+                                            <summary class="p-4 cursor-pointer text-white font-medium hover:bg-slate-700/50 rounded-lg">
+                                                ¿Cómo bloqueo a un usuario?
+                                            </summary>
+                                            <div class="p-4 pt-0 text-slate-300">
+                                                Ve al perfil del usuario, haz clic en los tres puntos y selecciona "Bloquear". También puedes hacerlo desde Configuración > Privacidad > Usuarios bloqueados.
+                                            </div>
+                                        </details>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact Support -->
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-4">Contactar Soporte</h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <button class="bg-slate-800/50 hover:bg-slate-700/50 p-4 rounded-lg text-left transition-colors">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                                </svg>
+                                                <span class="text-white font-medium">Chat en vivo</span>
+                                            </div>
+                                            <p class="text-slate-400 text-sm">Hablar con un representante</p>
+                                        </button>
+                                        
+                                        <button class="bg-slate-800/50 hover:bg-slate-700/50 p-4 rounded-lg text-left transition-colors">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span class="text-white font-medium">Enviar email</span>
+                                            </div>
+                                            <p class="text-slate-400 text-sm">Responderemos en 24 horas</p>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- App Info -->
+                                <div class="bg-slate-800/50 rounded-lg p-4">
+                                    <h4 class="text-white font-medium mb-2">Información de la aplicación</h4>
+                                    <div class="space-y-1 text-slate-400 text-sm">
+                                        <p>Versión: 2.1.0</p>
+                                        <p>Última actualización: 15/11/2024</p>
+                                        <p>Términos de servicio | Política de privacidad</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 z-50">
+        <div class="flex items-center justify-around py-2">
+            <a href="index.html" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span class="text-xs mt-1">Inicio</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-xs mt-1">Buscar</span>
+            </a>
+            <a href="#" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span class="text-xs mt-1">Crear</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center p-2 text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-xs mt-1">Perfil</span>
+            </a>
+        </div>
+    </nav>
+    
+    <script>
+        // Settings Page JavaScript
+        class SettingsPage {
+            constructor() {
+                this.currentSection = 'account';
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.initializeAnimations();
+            }
+            
+            setupEventListeners() {
+                // Navigation
+                const navItems = document.querySelectorAll('.settings-nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const section = e.currentTarget.dataset.section;
+                        this.switchSection(section);
+                    });
+                });
+                
+                // Save settings
+                const saveBtn = document.getElementById('save-settings');
+                saveBtn.addEventListener('click', () => {
+                    this.saveSettings();
+                });
+                
+                // Theme selection
+                const themeOptions = document.querySelectorAll('.theme-option');
+                themeOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        this.selectTheme(option);
+                    });
+                });
+                
+                // Toggle switches
+                const toggles = document.querySelectorAll('.toggle-switch input');
+                toggles.forEach(toggle => {
+                    toggle.addEventListener('change', (e) => {
+                        this.handleToggle(e.target);
+                    });
+                });
+            }
+            
+            initializeAnimations() {
+                // Animate sections on load
+                const sections = document.querySelectorAll('.settings-section');
+                sections.forEach((section, index) => {
+                    anime({
+                        targets: section,
+                        translateY: [20, 0],
+                        opacity: [0, 1],
+                        delay: index * 100,
+                        duration: 600,
+                        easing: 'easeOutExpo'
+                    });
+                });
+            }
+            
+            switchSection(sectionName) {
+                // Update navigation
+                document.querySelectorAll('.settings-nav-item').forEach(item => {
+                    item.classList.remove('active', 'text-purple-400');
+                    item.classList.add('text-slate-300');
+                });
+                
+                document.querySelector(`[data-section="${sectionName}"]`).classList.add('active', 'text-purple-400');
+                document.querySelector(`[data-section="${sectionName}"]`).classList.remove('text-slate-300');
+                
+                // Update content
+                document.querySelectorAll('.settings-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                const targetSection = document.getElementById(`${sectionName}-section`);
+                targetSection.classList.add('active');
+                
+                // Animate section entrance
+                anime({
+                    targets: targetSection,
+                    translateX: [50, 0],
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: 'easeOutExpo'
+                });
+                
+                this.currentSection = sectionName;
+            }
+            
+            selectTheme(option) {
+                // Remove active state from all themes
+                document.querySelectorAll('.theme-option').forEach(opt => {
+                    opt.classList.remove('border-purple-600');
+                    opt.classList.add('border-transparent');
+                });
+                
+                // Add active state to selected theme
+                option.classList.remove('border-transparent');
+                option.classList.add('border-purple-600');
+                
+                // Animate selection
+                anime({
+                    targets: option,
+                    scale: [1, 1.05, 1],
+                    duration: 300,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+                
+                this.showToast('Tema actualizado', 'success');
+            }
+            
+            handleToggle(toggle) {
+                const isChecked = toggle.checked;
+                const settingName = toggle.closest('.flex').querySelector('h3').textContent;
+                
+                // Animate toggle
+                anime({
+                    targets: toggle.nextElementSibling,
+                    scale: [1, 1.1, 1],
+                    duration: 200,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+                
+                this.showToast(`${settingName} ${isChecked ? 'activado' : 'desactivado'}`, 'info');
+            }
+            
+            saveSettings() {
+                // Simulate saving
+                const saveBtn = document.getElementById('save-settings');
+                const originalText = saveBtn.textContent;
+                
+                saveBtn.textContent = 'Guardando...';
+                saveBtn.disabled = true;
+                
+                setTimeout(() => {
+                    saveBtn.textContent = 'Guardado';
+                    this.showToast('Configuración guardada correctamente', 'success');
+                    
+                    setTimeout(() => {
+                        saveBtn.textContent = originalText;
+                        saveBtn.disabled = false;
+                    }, 2000);
+                }, 1000);
+            }
+            
+            showToast(message, type = 'info') {
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.className = `fixed top-24 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transform translate-x-full transition-transform duration-300`;
+                
+                const colors = {
+                    'success': 'bg-green-600',
+                    'error': 'bg-red-600',
+                    'info': 'bg-blue-600',
+                    'warning': 'bg-yellow-600'
+                };
+                
+                toast.classList.add(colors[type]);
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full');
+                }, 100);
+                
+                // Auto remove
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        // Initialize settings page
+        document.addEventListener('DOMContentLoaded', () => {
+            new SettingsPage();
+        });
+    </script>
+</body>
+</html>
